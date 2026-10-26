@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Great Notch Inn — Official (v2)</title>
+  <meta name="description" content="The Great Notch Inn — Live music every night. Established 1939. Little Falls, NJ."/>
+  <meta property="og:image" content="https://thegreatnotchinn.com/images/og-share.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="The Great Notch Inn's porch and roofline lit up in red and green neon at night" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://thegreatnotchinn.com/images/og-share.jpg" />
+  <style>
+    :root{
+      --bg:#000;
+      --panel: rgba(0,0,0,0.62);
+      --accent-cyan: #00e6ff;
+      --accent-pink: #ff00c8;
+      --accent-lime: #00ff66;
+      --accent-yellow: #ffe84d;
+      --hover-red: #990000;
+      --molten-start:#cc0000;
+      --molten-end:#990000;
+      --shadow-xl: 0 20px 60px rgba(0,0,0,.65);
+      --card-bd: 1px solid rgba(255,255,255,0.08);
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      font-family:"Helvetica Neue", Arial, sans-serif;
+      background:var(--bg);
+      color:#eee;
+      scroll-behavior:smooth;
+      text-rendering:optimizeLegibility;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    nav{ position:fixed; top:0; left:0; right:0; z-index:1200; display:flex; justify-content:center; backdrop-filter: blur(6px); background:linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.28)); padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.03);}    
+    nav .nav-inner{max-width:1200px;width:100%;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;}
+    nav a{ color:#fff; text-decoration:none; padding:8px 12px; font-weight:800; letter-spacing:0.06em; transition:all .18s;}
+    nav a:hover{ color:var(--hover-red); transform:translateY(-2px); }
+
+    .live-tonight{
+      position:fixed; top:16px; right:18px; z-index:1250;
+      background: linear-gradient(180deg, var(--molten-start), var(--molten-end));
+      padding:10px 16px; border-radius:10px; color:#fff; font-weight:900;
+      box-shadow:0 8px 28px rgba(153,0,0,0.45); letter-spacing:0.08em; cursor:pointer; border:0;
+      animation: pulse 2.4s infinite ease-in-out;
+    }
+    .live-tonight:hover{ filter: brightness(1.08); transform: translateY(-2px); }
+    @keyframes pulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(153,0,0,.55)} 50%{ box-shadow:0 0 0 16px rgba(153,0,0,0)} }
+
+    .parallax{ 
+      min-height:calc(100vh - 70px); 
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      padding:90px 20px; 
+      background-position:center; 
+      background-size:cover; 
+      background-repeat:no-repeat; 
+      position:relative; 
+      background-attachment:fixed; 
+    }
+    .parallax::before{ content:""; position:absolute; inset:0; z-index:0; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,.55) 55%, rgba(0,0,0,.85) 100%), linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.55)); }
+    .panel{ position:relative; z-index:1; background:var(--panel); padding:26px; border-radius:16px; max-width:1100px; width:100%; box-shadow:var(--shadow-xl); text-align:left; color:#eee; border: var(--card-bd); }
+
+    h1,h2,h3{ font-weight:900; color:var(--hover-red); letter-spacing:0.08em; margin:0 0 8px 0; text-transform:uppercase; text-shadow: 0 0 0 rgba(255,255,255,0);
+      animation: glow 4.6s ease-in-out infinite; }
+    @keyframes glow{ 0%,100%{ text-shadow: 0 0 8px rgba(153,0,0,.35), 0 0 18px rgba(255,0,0,.16);} 50%{ text-shadow: 0 0 14px rgba(153,0,0,.55), 0 0 32px rgba(255,0,0,.22);} }
+    h1{ font-size:2.6rem; }
+    h2{ font-size:2rem; }
+    h3{ font-size:1.25rem; }
+    .sub{ color:#cfcfcf; font-size:.92rem; letter-spacing:0.08em; margin-bottom:12px }
+
+    p, li{ line-height:1.6; text-align:justify; text-justify:inter-word; }
+
+    a:hover, a:focus { color: var(--hover-red) !important; text-decoration:underline; outline:none; }
+
+    .texture-wood .panel{ background: linear-gradient(180deg, rgba(20,12,10,.75), rgba(8,5,4,.75)); }
+    .texture-paper .panel{ background: linear-gradient(180deg, rgba(22,22,22,.8), rgba(10,10,10,.85)); }
+
+    .articles-list{display:grid;gap:14px;margin-top:8px}
+    .article-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;border: var(--card-bd)}
+    .read-more{display:inline-block;margin-top:8px;padding:10px 14px;border-radius:10px;background:linear-gradient(180deg, var(--molten-start), var(--molten-end));border:0;color:#fff;cursor:pointer;text-transform:uppercase;font-weight:900;letter-spacing:0.06em}
+    .expanded{margin-top:12px;overflow:hidden;max-height:0;transition:max-height .35s ease; color:#ddd;}
+    .expanded.open{max-height:1000px}
+    
+    .static-article-item { display: flex; align-items: flex-start; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #ddd; }
+    .static-article-item:last-child { border-bottom: none; }
+    .static-article-item .thumbnail { width: 120px; height: 120px; object-fit: cover; margin-right: 20px; flex-shrink: 0; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); display: none; }
+    .static-article-item .content h3 { margin-top: 0; font-size: 1.1em; color: var(--accent-cyan); text-shadow: none; animation: none; text-transform: none; }
+    .static-article-item .content p { line-height: 1.4; margin: 5px 0 0 0; text-align: left; }
+    .static-article-item .content a { color: var(--accent-cyan); text-decoration: none; transition: color 0.18s, text-decoration 0.18s; }
+    .static-article-item .content a:hover { color: var(--hover-red) !important; text-decoration: underline; }
+
+    #links .static-links-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-top:12px; }
+    .static-band-card { background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); border: var(--card-bd); padding:14px; border-radius:12px; text-align: center; transition: all 0.18s; }
+    .static-band-card:hover { transform: translateY(-2px); background: rgba(153, 0, 0, 0.2); }
+    .static-band-card a { display: block; color: var(--accent-yellow); text-decoration: none; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 0; transition: color 0.18s; }
+    .static-band-card a:hover { color: var(--hover-red) !important; text-decoration: none; }
+
+    .gallery{display:grid;gap:8px;grid-template-columns:repeat(3,1fr);margin-top:12px}
+    .gallery img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:10px;cursor:pointer;border: var(--card-bd);transition:transform .18s,box-shadow .18s}
+    .gallery img:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+
+    .lightbox{ position:fixed; inset:0; background:rgba(0,0,0,.92); display:none; align-items:center; justify-content:center; z-index:2000; }
+    .lightbox.open{ display:flex; }
+    .lightbox img{ max-width:92vw; max-height:86vh; border-radius:12px; box-shadow: var(--shadow-xl); }
+    .lb-nav{ position:absolute; top:50%; width:100%; display:flex; justify-content:space-between; transform: translateY(-50%); }
+    .lb-btn{ background:rgba(255,255,255,.08); border:0; color:#fff; font-weight:900; padding:12px 16px; border-radius:10px; cursor:pointer; margin:0 12px; }
+    .lb-close{ position:absolute; top:18px; right:18px; }
+
+    .video-wrap{margin-top:14px;position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;border: var(--card-bd)}
+    .video-wrap iframe{position:absolute;left:0;top:0;width:100%;height:100%;border:0}
+
+    .contact-form { display:block; margin-top:12px; }
+    .form-row { display:flex; gap:12px; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; }
+    .form-field { flex:1 1 220px; min-width:180px; display:flex; flex-direction:column; }
+    label { font-size:0.75rem; color:#d6d6d6; margin-bottom:6px; letter-spacing:0.08em; text-transform:uppercase; }
+    input[type="text"], input[type="email"], input[type="tel"], textarea { padding:12px 14px; border-radius:10px; border: var(--card-bd); background: rgba(255,255,255,0.02); color:#fff; outline:none; font-size:1rem; resize:vertical; }
+    textarea { min-height:120px; }
+    .form-actions { display:flex; gap:12px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+    .btn-primary { padding:12px 16px; background:linear-gradient(180deg, var(--molten-start), var(--molten-end)); color:#fff; border:none; border-radius:10px; cursor:pointer; font-weight:900; text-transform:uppercase; letter-spacing:0.06em; }
+    .btn-secondary { padding:12px 16px; background:transparent; color:var(--accent-cyan); border:1px solid rgba(255,255,255,0.16); border-radius:10px; cursor:pointer; text-transform:uppercase; font-weight:800; }
+
+    footer{background:#0d0d0d;color:#ccc;padding:28px;text-align:center;border-top:2px solid rgba(255,255,255,0.06)}
+    footer a{color:var(--accent-cyan);text-decoration:none}
+
+    .social-row{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:12px;flex-wrap:wrap}
+    .social-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;background:transparent;border:2px solid rgba(255,255,255,0.12);color:#fff;text-decoration:none;font-weight:900;font-size:1rem; transition:background .18s,color .18s,transform .12s; box-shadow: 0 8px 24px rgba(0,0,0,0.45);}
+    .social-btn:hover, .social-btn:focus{ background: var(--hover-red) !important; color:#fff !important; transform:translateY(-4px); }
+    footer .social-row .social-btn{ padding:8px 12px; font-weight:800; font-size:0.94rem;}
+
+    figure{ position:relative; overflow:hidden; border-radius:12px; }
+    figure .overlay{ position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.55)); display:flex; align-items:flex-end; justify-content:center; padding:12px; opacity:0; transition:opacity .22s; }
+    figure:hover .overlay{ opacity:1; }
+    .overlay .cta{ background:linear-gradient(180deg, var(--molten-start), var(--molten-end)); color:#fff; padding:8px 12px; border-radius:10px; font-weight:900; }
+
+    .timeline{ display:flex; gap:16px; overflow:auto; padding:6px 2px; }
+    .tl-item{ min-width:240px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:var(--card-bd); border-radius:12px; padding:12px; }
+    .tl-year{ font-weight:900; color:var(--accent-yellow); }
+
+    .calendar-wrap { width: 100%; margin: 0 auto; overflow-x: auto; }
+    #calendar table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    #calendar th, #calendar td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,.15); text-align: left; }
+    #calendar th { text-transform: uppercase; font-size: .85rem; letter-spacing: .05em; color: var(--accent-cyan); border-bottom: 2px solid rgba(255,255,255,0.2); }
+    #calendar tr { cursor: pointer; transition: background .2s ease; }
+    #calendar tr:hover { background: rgba(255,255,255,.08); }
+    #calendar .today { background: var(--accent-yellow); color: #101010; font-weight: bold; }
+    .live-badge { display: inline-block; background: var(--molten-start); color: #fff; font-size: 0.75em; font-weight: bold; text-transform: uppercase; padding: 2px 6px; margin-left: 8px; border-radius: 4px; box-shadow: 0 0 10px rgba(255,0,0,0.5); }
+    .toggle { text-align: center; cursor: pointer; padding: 10px; font-size: .9rem; opacity: .85; color: var(--accent-lime); font-weight: 800; letter-spacing: 0.05em; margin-top:10px; }
+    
+    .show-more-btn { 
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 12px;
+      margin: 20px 0;
+      background: linear-gradient(180deg, var(--molten-start), var(--molten-end));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: all 0.18s;
+    }
+    .show-more-btn:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+    }
+    .show-more-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .calendar-embed {
+      margin: 30px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: var(--card-bd);
+      background: #000;
+    }
+    .calendar-embed iframe {
+      width: 100%;
+      height: 600px;
+      border: 0;
+      filter: invert(0.9) hue-rotate(180deg);
+      background: #000;
+    }
+    
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 2100; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(4px); }
+    .modal-backdrop.active { opacity: 1; pointer-events: auto; }
+    .modal-card { background: var(--panel); border: var(--card-bd); padding: 30px; border-radius: 16px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-xl); transform: translateY(20px); transition: transform 0.3s; position: relative; display: flex; flex-direction: column; }
+    .modal-backdrop.active .modal-card { transform: translateY(0); }
+    .modal-close { position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #aaa; font-size: 1.5rem; cursor: pointer; line-height: 1; z-index: 10; }
+    .modal-close:hover { color: #fff; }
+    .modal-title { color: var(--accent-cyan); font-size: 1.5rem; margin-bottom: 10px; line-height: 1.2; text-shadow: none; animation: none; text-transform: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-top:0; }
+    .modal-time { color: var(--accent-yellow); font-weight: bold; margin-bottom: 15px; display: block; font-size: 1.1rem; }
+    .modal-desc { line-height: 1.6; color: #ddd; margin-bottom: 20px; white-space: pre-wrap; font-size: 0.95rem; }
+    .modal-btn { display: inline-block; width: 100%; text-align: center; padding: 12px; background: linear-gradient(180deg, var(--molten-start), var(--molten-end)); color: #fff; border-radius: 8px; text-decoration: none; font-weight: bold; text-transform: uppercase; border: none; cursor: pointer; box-sizing: border-box; }
+    .modal-btn:hover { filter: brightness(1.1); color: #fff; text-decoration: none; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+
+    @media (max-width: 640px) {
+      #calendar tr { display: block; margin-bottom: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; }
+      #calendar td { display: block; border: none; padding: 4px 0; }
+      #calendar thead { display: none; }
+      .calendar-embed iframe { height: 400px; }
+    }
+
+    #home { background-image: url('/images/notch2.jpg'); min-height: 100vh; } 
+    #about { background-image: url('/images/notch3.jpg'); }
+    #calendar { background-image: url('/images/notch8.jpg'); }
+    #articles { background-image: url('/images/notch1.jpg'); }
+    #photos { background-image: url('/images/notch4.jpg'); }
+    #videos { background-image: url('/images/notch7.jpg'); }
+    #links { background-image: url('/images/notch6.jpg'); }
+    #merchandise { background-image: url('/images/notch5.jpg'); }
+    #history { background-image: url('/images/notch8.jpg'); }
+    #contact { padding:48px 18px; background:linear-gradient(180deg, rgba(0,0,0,0.96), rgba(0,0,0,0.98)); display: flex; justify-content: center; align-items: center; }
+    #contact .panel { margin: 0 auto; }
+    #hero-image-insert { display: block; margin: 15px auto; max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+
+    @media (max-width:600px) {
+        .static-article-item { flex-direction: column; align-items: center; text-align: center; }
+        .static-article-item .thumbnail { margin: 0 0 15px 0; }
+    }
+    @media (max-width:900px){ .parallax{padding:110px 16px 70px;background-attachment:scroll} .panel{padding:18px} .live-tonight{top:86px} }
+    @media (max-width:420px){ .gallery img{aspect-ratio:auto;height:100px} .form-row{flex-direction:column} }
+    /* Glass pill on each dates/artists entry */
+    #calendar table { border-collapse: separate; border-spacing: 0 8px; }
+    #calendar tbody td { background: rgba(255,255,255,0.07); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-top: 1px solid rgba(255,255,255,0.18); border-bottom: 1px solid rgba(255,255,255,0.18); }
+    #calendar tbody td:first-child { border-left: 1px solid rgba(255,255,255,0.18); border-radius: 999px 0 0 999px; }
+    #calendar tbody td:last-child { border-right: 1px solid rgba(255,255,255,0.18); border-radius: 0 999px 999px 0; }
+    #calendar tbody td:only-child { border-radius: 999px; }
+    #calendar tbody tr:hover td { background: rgba(255,255,255,0.14); }
+    #calendar tbody tr.today td { background: var(--accent-yellow); }
+    @media (max-width: 640px) {
+      #calendar tbody tr { background: rgba(255,255,255,0.07); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.18); border-radius: 22px; padding: 10px 18px; }
+      #calendar tbody tr.today { background: var(--accent-yellow); }
+      #calendar tbody td, #calendar tbody td:first-child, #calendar tbody td:last-child, #calendar tbody tr:hover td, #calendar tbody tr.today td { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; border: none; border-radius: 0; }
+    }
+  </style>
+
+  <script>
+    function handleImageError(image) {
+      const altExt = image.getAttribute('data-alt-ext');
+      if (altExt && !image.getAttribute('data-swapped')) {
+        const currentSrc = image.src;
+        const pathBase = currentSrc.substring(0, currentSrc.lastIndexOf('.')) || currentSrc;
+        image.src = `${pathBase.replace('https://thegreatnotchinn.com/','')}.${altExt}`; 
+        image.setAttribute('data-swapped', 'true');
+        image.onerror = null; 
+      } else {
+        image.style.display = 'none';
+        console.error(`Failed to load image: ${image.src}`);
+      }
+    }
+
+    function initializeUtilityScripts() {
+        try {
+            if (document.getElementById('liveTonightBtn')) {
+                document.getElementById('liveTonightBtn').addEventListener('click', ()=> {
+                    document.querySelector('#calendar').scrollIntoView({behavior:'smooth'});
+                });
+            }
+
+            document.querySelectorAll('nav a').forEach(a=>{ a.addEventListener('click', ()=>{ 
+                document.querySelectorAll('.expanded').forEach(e=> e.classList.remove('open')); 
+                document.querySelectorAll('.read-more').forEach(b=> b.textContent='Read More'); 
+            }); });
+
+            const lb = document.getElementById('lightbox');
+            const lbImg = document.getElementById('lbImg');
+            let currentGallery = []; let currentIndex = 0;
+            function openLightbox(src){ lbImg.src = src; lb.classList.add('open'); lb.setAttribute('aria-hidden','false'); }
+            function closeLightbox(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); lbImg.removeAttribute('src'); }
+            function navLightbox(dir){ if(!currentGallery.length) return; currentIndex = (currentIndex + dir + currentGallery.length) % currentGallery.length; lbImg.src = currentGallery[currentIndex].src; }
+            if(lb) {
+              lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLightbox(); });
+            }
+            document.addEventListener('keydown', (e)=>{ if(!lb || !lb.classList.contains('open')) return; if(e.key==='Escape') closeLightbox(); if(e.key==='ArrowRight') navLightbox(1); if(e.key==='ArrowLeft') navLightbox(-1); });
+
+            function initializeLightbox() {
+                const allLightboxImages = Array.from(document.querySelectorAll('#merchandise figure img, #merchandise .gallery img, #photos .gallery img'));
+                allLightboxImages.forEach((img, idx) => {
+                    img.style.cursor = 'pointer'; 
+                    img.addEventListener('click', () => { 
+                        currentGallery = allLightboxImages;
+                        currentIndex = currentGallery.findIndex(gImg => gImg.src === img.src); 
+                        openLightbox(img.src); 
+                    });
+                });
+            }
+            initializeLightbox();
+
+        } catch (error) {
+            console.error("Error in utility script initialization:", error);
+        }
+    }
+    
+    document.addEventListener("DOMContentLoaded", initializeUtilityScripts);
+  </script>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="#home">HOME</a>
+      <a href="#about">ABOUT</a>
+      <a href="#calendar">CALENDAR</a>
+      <a href="#articles">ARTICLES</a>
+      <a href="#photos">PHOTOS</a>
+      <a href="#videos">VIDEOS</a>
+      <a href="#links">LINKS</a>
+      <a href="#merchandise">MERCHANDISE</a>
+      <a href="#history">HISTORY</a>
+      <a href="#contact">CONTACT</a>
+    </div>
+  </nav>
+
+  <button class="live-tonight" id="liveTonightBtn" title="Jump to today's calendar">LIVE TONIGHT</button>
+
+  <section id="home" class="parallax">
+    <div class="panel texture-wood">
+      <h1>THE GREAT NOTCH INN</h1>
+      <div class="sub">Established 1939 — Home of Live Rock & Blues</div>
+      
+      <div style="background-color: rgba(153, 0, 0, 0.2); padding: 12px; border-radius: 10px; margin-bottom: 16px; border: 1px solid var(--hover-red); box-shadow: 0 0 10px rgba(255, 0, 0, 0.25);">
+        <h3 style="color: var(--accent-yellow); margin-bottom: 4px; animation: none; text-shadow: none; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">FEATURED IN USA TODAY AND NORTHJERSEY.COM AS A <br>
+TOP DIVE BAR DESTINATION IN THE NATION!</h3>
+        
+        <img id="hero-image-insert" src="/images/IMG_0742.jpg" alt="The Great Notch Inn Exterior" loading="lazy">
+        
+        <p style="text-align: center; margin-top: 0; margin-bottom: 10px; font-size: 1.1rem; color: #fff;">
+          **Named one of the best dive bars in the US.**
+        </p>
+        <p style="text-align: center; margin: 0;">
+          <a href="https://www.northjersey.com/story/entertainment/dining/2025/11/21/great-notch-inn-nj-clifton-best-dives-bars-us/87379877007/" target="_blank" rel="noopener" class="read-more" style="display: inline-block; padding: 8px 14px; text-decoration: none; background: linear-gradient(180deg, #ff6600, #cc3300); border: none; font-size: 0.95rem; border-radius: 8px;">
+            READ THE FULL ARTICLE
+          </a>
+        </p>
+      </div>
+      <p>The Great Notch Inn provides the finest in live entertainment, mixed drinks and beers. There's never a cover charge, and you can find the best New Jersey bands playing rock and blues in a wonderful rockin roadside environment. The Great Notch Inn is a relaxing destination after a long bike ride. Hang out in the warm rustic interior, or out on the porch in the fresh air! We can also make your private parties or events a memorable occasion. Package goods available. ATM now available!</p>
+
+      <p style="margin-top:12px">
+        <strong style="color:var(--accent-lime)">ADDRESS:</strong>
+        <a href="https://maps.app.goo.gl/3547G" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">
+          400 Route 46 West, Little Falls, NJ 07424
+        </a>
+      </p>
+
+      <p style="margin-top:6px">
+        <strong style="color:var(--accent-cyan)">PHONE:</strong>
+        <a href="tel:+19732567742" style="color:inherit;text-decoration:none">(973) 256-7742</a>
+      </p>
+
+      <p style="margin-top:6px">Bar pies available · 21+ only</p>
+
+      <div class="social-row" aria-label="Follow The Great Notch Inn">
+        <a class="social-btn" href="https://www.facebook.com/profile.php?id=100051551302390" target="_blank" rel="noopener">Facebook</a>
+        <a class="social-btn" href="https://www.instagram.com/greatnotchinn/" target="_blank" rel="noopener">Instagram</a>
+        <a class="social-btn" href="https://x.com/GreatNotchInn/" target="_blank" rel="noopener">X</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="parallax">
+    <div class="panel texture-paper">
+      <h2>ABOUT THE NOTCH</h2>
+      <div class="sub">A Little Falls roadhouse since 1939</div>
+      <p>The Great Notch Inn is a family-owned tavern that was opened by Gregory and Florence DiLeo in 1939. For many years the Notch served breakfast, lunch, and dinner along with a variety of beer and liquor. While everything around has changed, the Great Notch Inn has basically remained the same. Gregory DiLeo operated the bar until his passing in 1988, leaving the business to his daughter Florence and children Rich and Gail. Since 1988, the Great Notch Inn has found its niche as a live music venue, hosting many rock and blues bands from the tri-state area — featuring live entertainment every night. The Notch also offers limited food and takeout beer and wine from open till close. The beautiful front porch attracts bikers and locals who enjoy a cold beer and the old-time roadhouse feel.</p>
+      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="#articles" class="read-more">Read Articles & History</a>
+        <a href="#photos" class="read-more">See Photos</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="calendar" class="parallax">
+    <div class="panel" style="padding:18px">
+      <h2>UPCOMING EVENTS</h2>
+      <div class="sub">Live Music Schedule</div>
+      
+      <div class="calendar-wrap">
+        <table id="future">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Event</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        
+        <button id="showMoreBtn" class="show-more-btn" style="display:none;">SHOW MORE EVENTS</button>
+        
+        <h3 style="margin-top:40px; margin-bottom:15px; border-top:1px solid rgba(255,255,255,0.1); padding-top:30px;">MONTHLY CALENDAR VIEW</h3>
+        <div class="calendar-embed">
+          <iframe src="https://calendar.google.com/calendar/embed?src=greatnotchinn%40gmail.com&ctz=America%2FNew_York&mode=MONTH&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&bgcolor=%23000000&color=%23cc0000&wkst=1" frameborder="0" scrolling="no"></iframe>
+        </div>
+        
+        <div class="toggle" id="togglePastBtn">Show Past Events ▼</div>
+        
+        <div id="past-wrap" style="display:none">
+          <h3 style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:20px;">Past 14 Events</h3>
+          <table id="past">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Event</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="articles" class="parallax">
+    <div class="panel texture-paper">
+      <h2>ARTICLES & PRESS</h2>
+      <div class="sub">Historic clippings, local press & features</div>
+      
+      <div class="articles-list" id="articlesList">
+        <div class="static-article-item">
+            <img class="thumbnail" src="https://googleusercontent.com/image_collection/image_retrieval/8019492292109030214_0" alt="Exterior of The Great Notch Inn">
+            <div class="content">
+                <h3><a href="https://www.funnewjersey.com/en/ads/5a4675d1a6a9e/best-dive-bars-in-nj/the-great-notch-inn" target="_blank" rel="noopener">Best Dive Bars in New Jersey: The Great Notch Inn</a></h3>
+                <p>A feature on the Inn's status as the quintessential New Jersey dive bar and beloved live music venue, showcasing its unique appeal.</p>
+            </div>
+        </div>
+        <div class="static-article-item">
+            <img class="thumbnail" src="https://googleusercontent.com/image_collection/image_retrieval/8019492292109030214_1" alt="Bar interior of The Great Notch Inn">
+            <div class="content">
+                <h3><a href="https://njmonthly.com/articles/eat-drink/the-best-bars-in-new-jersey/" target="_blank" rel="noopener">NJ Monthly: Snippet from "The Best Bars in New Jersey"</a></h3>
+                <p>A mention of the Inn's long, colorful history, its survival against highway expansions, and its vibrant music scene.</p>
+            </div>
+        </div>
+        <div class="static-article-item">
+            <img class="thumbnail" src="https://googleusercontent.com/image_collection/image_retrieval/8019492292109030214_2" alt="Historical photo of The Great Notch Inn">
+            <div class="content">
+                <h3><a href="https://lambertcastle.org/the-great-notch-inn/" target="_blank" rel="noopener">Passaic County Historical Society: The Inn's Deep History</a></h3>
+                <p>An article detailing the fascinating history of the roadhouse, tracing its origins and evolution from its earliest days in Northern NJ.</p>
+            </div>
+        </div>
+        <div class="static-article-item">
+            <img class="thumbnail" src="https://googleusercontent.com/image_collection/image_retrieval/8019492292109030214_3" alt="Sign outside The Great Notch Inn">
+            <div class="content">
+                <h3><a href="https://thisismynewjersey.wordpress.com/2016/04/23/protecting-the-great-notch-inn/" target="_blank" rel="noopener">Protecting the Great Notch Inn (Highway Expansion Story)</a></h3>
+                <p>An article detailing the historic fight to save the Inn from the Route 46 highway expansion project and preserve the landmark.</p>
+            </div>
+        </div>
+        <div class="static-article-item">
+            <img class="thumbnail" src="https://googleusercontent.com/image_collection/image_retrieval/8019492292109030214_4" alt="Exterior shot of the Inn at night">
+            <div class="content">
+                <h3><a href="https://montclairfilm.org/wp-content/uploads/2020/10/MFF_2020_Catalog_LR-b.pdf" target="_blank" rel="noopener">Montclair Film Festival Catalog: "THE GREAT NOTCH INN" Short Film</a></h3>
+                <p>A mention of the short documentary film about the Inn's community and the people who make it a lasting landmark.</p>
+            </div>
+        </div>
+        <div class="static-article-item">
+            <img class="thumbnail" src="https://googleusercontent.com/image_collection/image_retrieval/8019492292109030214_5" alt="Close-up of The Great Notch Inn sign">
+            <div class="content">
+                <h3><a href="https://www.jerseyindie.com/blog/the-2018-south-mountain-international-blues-festival-is-coming-at-you" target="_blank" rel="noopener">Jersey Indie: Mention as a Venue for the South Mountain Blues Festival</a></h3>
+                <p>An article highlighting the Inn's consistent role as a key venue and major supporter of the Northern NJ blues music scene.</p>
+            </div>
+        </div>
+        <div class="static-article-item">
+            <img class="thumbnail" src="https://googleusercontent.com/image_collection/image_retrieval/8019492292109030214_6" alt="Interior shot of the stage and bar area">
+            <div class="content">
+                <h3><a href="https://nysmusic.com/2023/04/24/matt-niedbalski/" target="_blank" rel="noopener">NYS Music: Interview with Jazz Drummer Matt Niedbalski (Venue Mention)</a></h3>
+                <p>A music industry piece that mentions the Inn as a memorable, raw, and essential stop for touring and local musicians.</p>
+            </div>
+        </div>
+        <div class="static-article-item">
+            <img class="thumbnail" src="https://googleusercontent.com/image_collection/image_retrieval/8019492292109030214_7" alt="The Great Notch Inn's front door">
+            <div class="content">
+                <h3><a href="https://www.youtube.com/watch?v=ChKVZnfocOU" target="_blank" rel="noopener">YouTube: "Rocking Out at The Legendary Great Notch Inn" (Video Coverage)</a></h3>
+                <p>In-depth video media coverage, featuring conversation with the owner about the roadhouse's history, legacy, and community spirit.</p>
+            </div>
+        </div>
+        <div class="static-article-item">
+            <img class="thumbnail" src="https://googleusercontent.com/image_collection/image_retrieval/8019492292109030214_8" alt="Street view of The Great Notch Inn">
+            <div class="content">
+                <h3><a href="https://forums.egullet.org/topic/43122-great-notch-inn/" target="_blank" rel="noopener">eGullet Forums: Great Notch Inn Review/Discussion Thread</a></h3>
+                <p>A classic online discussion thread from the early 2000s, reviewing the Inn's unique atmosphere, food, and reputation.</p>
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="photos" class="parallax">
+    <div class="panel texture-wood">
+      <h2 style="margin-bottom:12px;">PHOTOS</h2>
+      <div class="sub">Snapshots from the bar, porch, bikes and shows</div>
+      <p style="text-align:center;">
+        <a href="https://www.instagram.com/greatnotchinn/" target="_blank" rel="noopener" style="color:var(--accent-pink); font-size:1.2rem; font-weight:800; display:block; margin-bottom:15px; text-decoration:none;">
+          CLICK HERE TO VIEW OUR INSTAGRAM FEED: @greatnotchinn
+        </a>
+      </p>
+      <p style="color:#cfcfcf; text-align:center;">
+        Visit our **Instagram** page for the most current photos and live updates from the Inn!
+      </p>
+      <div class="gallery" id="photoGrid" style="margin-top:10px;grid-template-columns:repeat(3,1fr)">
+        <img src="/images/photos/1.jpg" alt="Photo 1" loading="lazy">
+        <img src="/images/photos/2.jpg" alt="Photo 2" loading="lazy">
+        <img src="/images/photos/3.jpg" alt="Photo 3" loading="lazy">
+        <img src="/images/photos/4.jpg" alt="Photo 4" loading="lazy">
+        <img src="/images/photos/5.jpg" alt="Photo 5" loading="lazy">
+        <img src="/images/photos/6.jpg" alt="Photo 6" loading="lazy">
+        <img src="/images/photos/7.jpg" alt="Photo 7" loading="lazy">
+        <img src="/images/photos/8.jpg" alt="Photo 8" loading="lazy">
+        <img src="/images/photos/9.jpg" alt="Photo 9" loading="lazy">
+        <img src="/images/photos/10.jpg" alt="Photo 10" loading="lazy">
+        <img src="/images/photos/11.jpg" alt="Photo 11" loading="lazy">
+        <img src="/images/photos/12.jpg" alt="Photo 12" loading="lazy">
+        <img src="/images/photos/13.jpg" alt="Photo 13" loading="lazy">
+        <img src="/images/photos/14.jpg" alt="Photo 14" loading="lazy">
+        <img src="/images/photos/15.jpg" alt="Photo 15" loading="lazy">
+        <img src="/images/photos/16.jpg" alt="Photo 16" loading="lazy">
+        <img src="/images/photos/17.jpg" alt="Photo 17" loading="lazy">
+        <img src="/images/photos/18.jpg" alt="Photo 18" loading="lazy">
+        <img src="/images/photos/19.jpg" alt="Photo 19" loading="lazy">
+        <img src="/images/photos/20.jpg" alt="Photo 20" loading="lazy">
+        <img src="/images/photos/21.jpg" alt="Photo 21" loading="lazy">
+        <img src="/images/photos/22.jpg" alt="Photo 22" loading="lazy">
+        <img src="/images/photos/23.jpg" alt="Photo 23" loading="lazy">
+        <img src="/images/photos/24.jpg" alt="Photo 24" loading="lazy">
+        <img src="/images/photos/25.jpg" alt="Photo 25" loading="lazy">
+        <img src="/images/photos/26.jpg" alt="Photo 26" loading="lazy">
+        <img src="/images/photos/27.jpg" alt="Photo 27" loading="lazy">
+        <img src="/images/photos/28.jpg" alt="Photo 28" loading="lazy">
+        <img src="/images/photos/29.jpg" alt="Photo 29" loading="lazy">
+        <img src="/images/photos/30.jpg" alt="Photo 30" loading="lazy">
+        <img src="/images/photos/31.jpg" alt="Photo 31" loading="lazy">
+        <img src="/images/photos/32.jpg" alt="Photo 32" loading="lazy">
+        <img src="/images/photos/33.jpg" alt="Photo 33" loading="lazy">
+        <img src="/images/photos/34.jpg" alt="Photo 34" loading="lazy">
+        <img src="/images/photos/35.jpg" alt="Photo 35" loading="lazy">
+        <img src="/images/photos/36.jpg" alt="Photo 36" loading="lazy">
+        <img src="/images/photos/37.jpg" alt="Photo 37" loading="lazy">
+        <img src="/images/photos/38.jpg" alt="Photo 38" loading="lazy">
+        <img src="/images/photos/39.jpg" alt="Photo 39" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+<section id="videos" class="parallax">
+  <div class="panel texture-paper">
+    <h2>VIDEOS</h2>
+    <div class="sub">Live clips and feature videos</div>
+    <p style="color:#ddd;">Below are public videos featuring The Great Notch Inn. (Embedded from YouTube; open in YouTube for full resolution.)</p>
+    
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:12px;">
+      
+      <div class="video-wrap">
+        <iframe src="https://www.youtube-nocookie.com/embed/qLve97wev_o" title="Mrs.T's Pierogies Commercial" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube-nocookie.com/embed/e_fxfJ2Ww4Q" title="The Great Notch Inn Slideshow" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube-nocookie.com/embed/4a4dXO56_qQ" title="The Last Roadhouse - Great Notch Inn" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube-nocookie.com/embed/sJbxbb1VseI" title="Great Notch Inn. NJ's Rockin Roadhouse" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube-nocookie.com/embed/ChKVZnfocOU" title="Rocking Out at The Legendary Great Notch Inn" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube-nocookie.com/embed/AHCM1Szggas" title="The Great Notch Inn is one of N.J.'s best old school bar" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube-nocookie.com/embed/znYnMDSYEqc" title="Pride & Joy LIVE at Great Notch Inn" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+ <section id="links" class="parallax">
+  <div class="panel texture-wood">
+    <h2>BAND LINKS</h2>
+    <div class="sub">Bands that played at The Great Notch Inn (external)</div>
+    <div class="static-links-grid" id="bandLinks">
+      <div class="static-band-card"><a href="http://www.facebook.com/pages/Dean-Shot/112467271929" target="_blank" rel="noopener">DEAN SHOT'S MUSICAL COLLECTIVE AND JAM</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/bill.wildbillandfriendscom" target="_blank" rel="noopener">WILD BILL WINTERS</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/davefieldsband/" target="_blank" rel="noopener">DAVE FIELDS</a></div>
+      <div class="static-band-card"><a href="http://www.sharpedge.net/fr_sharpedge.cfm" target="_blank" rel="noopener">SHARP EDGE BAND</a></div>
+      <div class="static-band-card"><a href="http://www.hotmonkeylove.us/" target="_blank" rel="noopener">HOT MONKEY LOVE</a></div>
+      <div class="static-band-card"><a href="http://slipperychickens.net84.net/" target="_blank" rel="noopener">SLIPPERY CHICKENS</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/share/g/1BpYmtvu5S/" target="_blank" rel="noopener">REAL ROCK DRIVE</a></div>
+      <div class="static-band-card"><a href="http://www.facebook.com/pages/The-Sidney-Green-Street-band/163804176978078" target="_blank" rel="noopener">SIDNEY GREEN STREET BAND</a></div>
+      <div class="static-band-card"><a href="http://www.earthgrinders.com/" target="_blank" rel="noopener">EARTHGRINDERS</a></div>
+      <div class="static-band-card"><a href="http://www.thekootz.com/" target="_blank" rel="noopener">THE KOOTZ</a></div>
+      <div class="static-band-card"><a href="http://www.morningwoodbrothers.com/" target="_blank" rel="noopener">MORNINGWOOD BROTHERS</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/RatedRBand" target="_blank" rel="noopener">RATED R BAND</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/zeke.carey" target="_blank" rel="noopener">THE ZEKE CAREY BAND</a></div>
+      <div class="static-band-card"><a href="https://www.betteroffdead.com" target="_blank" rel="noopener">BETTER OFF DEAD</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/VinMottBlues" target="_blank" rel="noopener">VIN MOTT BLUES BAND</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/thenitrobluesband" target="_blank" rel="noopener">THE NITRO BLUES BAND</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/andylackow" target="_blank" rel="noopener">ANDY LACKOW & MESS AROUND</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/TheUptownBoogieBand" target="_blank" rel="noopener">UPTOWN BOOGIE</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/blackradishmusic" target="_blank" rel="noopener">BLACK RADISH</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/jack.c.romano.3" target="_blank" rel="noopener">JACK ROMANO</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/james.mcgill.823601" target="_blank" rel="noopener">JACK ROMANO</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/Jammers4Life" target="_blank" rel="noopener">JAM STRAIGHT</a></div>
+      <div class="static-band-card"><a href="https://www.paddylou.com/" target="_blank" rel="noopener">PADDY LOU</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/profile.php?id=100086468071197" target="_blank" rel="noopener">STONE BIRDS</a></div>
+      <div class="static-band-card"><a href="https://www.instagram.com/thewarehousebandnj/" target="_blank" rel="noopener">THE WAREHOUSE</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/wutwuzband" target="_blank" rel="noopener">WUT WUZ</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/PrimrosePathNJBand/" target="_blank" rel="noopener">PRIMROSE PATH</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/RWSNJ" target="_blank" rel="noopener">RUNNING WITH SCISSORS</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/profile.php?id=100064840940026" target="_blank" rel="noopener">GENESEE STILLS BAND</a></div>
+      <div class="static-band-card"><a href="https://www.facebook.com/johnbaab/" target="_blank" rel="noopener">JOHNNY BAAB</a></div>
+    </div>
+  </div>
+</section>
+
+<section id="merchandise" class="parallax">
+    <div class="panel texture-paper">
+      <h2>MERCHANDISE</h2>
+      <div class="sub">T‑shirts, Beanies, and Memorabilia</div>
+      <p style="color:#ddd;">Stop in for in‑store merchandise. **Check out our latest official gear!**</p>
+      
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px">
+
+	<figure>
+          <img src="/images/merch/merch_list.jpg" onerror="handleImageError(this)" data-alt-ext="png" alt="Prices — The Great Notch Inn" loading="lazy" style="width:100%;display:block">
+          <figcaption style="color:#cfcfcf;margin-top:6px;font-size:0.9rem;text-align:center">Prices</figcaption>
+          <div class="overlay"><div class="cta">Ask Bartender to Purchase</div></div>
+        </figure>
+
+        <figure>
+          <img src="/images/merch/beanie_black.jpg" onerror="handleImageError(this)" data-alt-ext="png" alt="Black Embroidered Beanie — The Great Notch Inn" loading="lazy" style="width:100%;display:block">
+          <figcaption style="color:#cfcfcf;margin-top:6px;font-size:0.9rem;text-align:center">Black Embroidered Beanie</figcaption>
+          <div class="overlay"><div class="cta">Ask Bartender to Purchase</div></div>
+        </figure>
+
+        <figure>
+          <img src="/images/merch/beanie_white.jpg" onerror="handleImageError(this)" data-alt-ext="png" alt="Cream Embroidered Beanie — The Great Notch Inn" loading="lazy" style="width:100%;display:block">
+          <figcaption style="color:#cfcfcf;margin-top:6px;font-size:0.9rem;text-align:center">Cream Embroidered Beanie</figcaption>
+          <div class="overlay"><div class="cta">Ask Bartender to Purchase</div></div>
+        </figure>
+
+        <figure>
+          <img src="/images/merch/beanie_blue.JPG" onerror="handleImageError(this)" data-alt-ext="png" alt="Blue Embroidered Beanie — The Great Notch Inn" loading="lazy" style="width:100%;display:block">
+          <figcaption style="color:#cfcfcf;margin-top:6px;font-size:0.9rem;text-align:center">Blue Embroidered Beanie</figcaption>
+          <div class="overlay"><div class="cta">Ask Bartender to Purchase</div></div>
+        </figure>
+
+        <figure>
+          <img src="/images/merch/beanie1.jpg" onerror="handleImageError(this)" data-alt-ext="png" alt="Great Notch Inn Knit Beanie" loading="lazy" style="width:100%;display:block">
+          <figcaption style="color:#cfcfcf;margin-top:6px;font-size:0.9rem;text-align:center">Original Knit Beanie</figcaption>
+          <div class="overlay"><div class="cta">Ask Bartender to Purchase</div></div>
+        </figure>
+
+        <figure>
+          <img src="/images/merch/truckerhats.jpg" onerror="handleImageError(this)" data-alt-ext="png" alt="Great Notch Inn Trucker Hats" loading="lazy" style="width:100%;display:block">
+          <figcaption style="color:#cfcfcf;margin-top:6px;font-size:0.9rem;text-align:center">Trucker Hats</figcaption>
+          <div class="overlay"><div class="cta">Ask Bartender to Purchase</div></div>
+        </figure>
+
+        <figure>
+          <img src="/images/merch/longsleeve1.jpg" onerror="handleImageError(this)" data-alt-ext="png" alt="Long Sleeve T-Shirt with Blue Flames — The Great Notch Inn" loading="lazy" style="width:100%;display:block">
+          <figcaption style="color:#cfcfcf;margin-top:6px;font-size:0.9rem;text-align:center">Long Sleeve T-Shirt</figcaption>
+          <div class="overlay"><div class="cta">Ask Bartender to Purchase</div></div>
+        </figure>
+
+        <figure>
+          <img src="/images/merch/tshirt2.jpg" onerror="handleImageError(this)" data-alt-ext="png" alt="Short Sleeve T-Shirt Retro Logo — The Great Notch Inn" loading="lazy" style="width:100%;display:block">
+          <figcaption style="color:#cfcfcf;margin-top:6px;font-size:0.9rem;text-align:center">Short Sleeve T-Shirt (Retro)</figcaption>
+          <div class="overlay"><div class="cta">Ask Bartender to Purchase</div></div>
+        </figure>
+
+        <figure>
+          <img src="/images/merch/tshirt1.jpg" onerror="handleImageError(this)" data-alt-ext="png" alt="Short Sleeve T-Shirt Roadhouse Graphic — The Great Notch Inn" loading="lazy" style="width:100%;display:block">
+          <figcaption style="color:#cfcfcf;margin-top:6px;font-size:0.9rem;text-align:center">Short Sleeve T-Shirt (Roadhouse)</figcaption>
+          <div class="overlay"><div class="cta">Ask Bartender to Purchase</div></div>
+        </figure>
+
+        <figure>
+          <img src="/images/merch/tank1.jpg" onerror="handleImageError(this)" data-alt-ext="png" alt="Women's Ribbed Tank Top — The Great Notch Inn" loading="lazy" style="width:100%;display:block">
+          <figcaption style="color:#cfcfcf;margin-top:6px;font-size:0.9rem;text-align:center">Women's Ribbed Tank Top</figcaption>
+          <div class="overlay"><div class="cta">Ask Bartender to Purchase</div></div>
+        </figure>
+
+        <figure>
+          <img src="/images/merch/towel.jpg" onerror="handleImageError(this)" data-alt-ext="png" alt="Great Notch Inn Towel with Flames" loading="lazy" style="width:100%;display:block">
+          <figcaption style="color:#cfcfcf;margin-top:6px;font-size:0.9rem;text-align:center">Flame Towel</figcaption>
+          <div class="overlay"><div class="cta">Ask Bartender to Purchase</div></div>
+        </figure>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="history" class="parallax">
+    <div class="panel texture-wood">
+      <h2>HISTORY TIMELINE</h2>
+      <div class="sub">Milestones through the decades</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-year">1939</div>
+          <p>Gregory & Florence DiLeo open the Great Notch Inn as a roadside tavern.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">1988</div>
+          <p>Gregory passes; Florence with Rich & Gail continue the legacy.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">1990s</div>
+          <p>Live rock & blues become nightly staples. The porch scene grows.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2000s</div>
+          <p>Regional press features the Notch as an essential NJ roadhouse.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">Today</div>
+          <p>Live music every night, six nights a week — a true NJ landmark.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="panel texture-paper" style="padding:20px">
+      <h2>CONTACT</h2>
+      <div class="sub">Send us a message — we'll get back to you</div>
+      <form id="contactForm" class="contact-form" novalidate>
+        <div class="form-row">
+          <div class="form-field"><label for="name">NAME</label><input id="name" name="name" type="text" autocomplete="name" required aria-required="true" /></div>
+          <div class="form-field"><label for="email">EMAIL</label><input id="email" name="email" type="email" autocomplete="email" required aria-required="true" /></div>
+          <div class="form-field"><label for="phone">PHONE NUMBER</label><input id="phone" name="phone" type="tel" autocomplete="tel" required aria-required="true" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-field" style="flex:1 1 100%;"><label for="message">MESSAGE</label><textarea id="message" name="message" required aria-required="true"></textarea></div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Send Message</button>
+          <button type="button" class="btn-secondary" id="openMailBtn">Open Mail Client (Blank)</button>
+          <div class="form-note">Submitting opens your default mail client prefilled to <strong style="color:var(--accent-cyan)">greatnotchinn@gmail.com</strong>.</div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div style="max-width:1100px;margin:0 auto;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+      <div style="flex:1 1 320px;text-align:left">
+        <h3 style="margin:0 0 6px 0;">The Great Notch Inn</h3>
+        <div style="color:#bbb">Family owned and operated since 1939 — A New Jersey landmark</div>
+        <div style="margin-top:8px;color:#ccc">
+          <a href="https://maps.app.goo.gl/3547G" target="_blank" rel="noopener">400 Route 46 West, Little Falls, NJ 07424</a>
+        </div>
+        <div style="margin-top:6px">
+          <a href="tel:+19732567742">Call (973) 256-7742</a>
+        </div>
+      </div>
+      <div style="flex:1 1 240px;text-align:left">
+        <strong style="color:var(--accent-lime)">Quick Links</strong>
+        <div style="color:#ccc;margin-top:6px;line-height:1.6">
+          <a href="#merchandise">Merchandise</a><br>
+          <a href="#videos">Event Videos</a><br>
+          <a href="mailto:greatnotchinn@gmail.com">Private Bookings</a><br>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+      <div style="flex:1 1 300px;text-align:left">
+        <strong style="color:var(--accent-lime)">Experience</strong>
+        <div style="color:#ccc;margin-top:6px;line-height:1.4">Live music every night · No Cover Charge · Full Bar & Package Goods</div>
+        <div class="social-row" style="justify-content:flex-start;">
+          <a class="social-btn" href="https://www.facebook.com/profile.php?id=100051551302390" target="_blank" rel="noopener">Facebook</a>
+          <a class="social-btn" href="https://www.instagram.com/greatnotchinn/" target="_blank" rel="noopener">Instagram</a>
+          <a class="social-btn" href="https://x.com/GreatNotchInn/" target="_blank" rel="noopener">X</a>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:18px;color:#88dfff;font-size:.9rem">© 2025 The Great Notch Inn. All rights reserved.</div>
+  </footer>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog">
+    <button class="lb-btn lb-close" aria-label="Close" onclick="closeLightbox()">✕</button>
+    <div class="lb-nav">
+      <button class="lb-btn" onclick="navLightbox(-1)">⟵ Prev</button>
+      <button class="lb-btn" onclick="navLightbox(1)">Next ⟶</button>
+    </div>
+    <img id="lbImg" alt="Expanded photo" />
+  </div>
+
+  <div id="eventModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card">
+        <button class="modal-close" onclick="closeEventModal()" aria-label="Close">✕</button>
+        <h3 class="modal-title" id="modalTitle"></h3>
+        <span class="modal-time" id="modalTime"></span>
+        <div class="modal-desc" id="modalDesc"></div>
+        <div class="modal-location" id="modalLocation" style="margin-bottom:20px; color:#aaa; font-style:italic; font-size:0.9rem;"></div>
+        <a id="modalLink" href="#" target="_blank" class="modal-btn">View on Google Calendar</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('=== DOM Content Loaded ===');
+      
+      // Contact form
+      const contactForm = document.getElementById('contactForm');
+      const openMailBtn = document.getElementById('openMailBtn');
+      
+      function sendMail(event) {
+        event.preventDefault();
+        const form = document.getElementById('contactForm');
+        const name = form.name.value;
+        const email = form.email.value;
+        const phone = form.phone.value;
+        const message = form.message.value;
+        
+        const subject = encodeURIComponent('Contact from ' + name);
+        const body = encodeURIComponent(
+          'Name: ' + name + '\n' +
+          'Email: ' + email + '\n' +
+          'Phone: ' + phone + '\n\n' +
+          'Message:\n' + message
+        );
+        
+        window.location.href = 'mailto:greatnotchinn@gmail.com?subject=' + subject + '&body=' + body;
+        return false;
+      }
+      
+      function openDirectMail() {
+        window.location.href = 'mailto:greatnotchinn@gmail.com';
+      }
+      
+      if (contactForm) {
+        contactForm.addEventListener('submit', sendMail);
+      }
+      
+      if (openMailBtn) {
+        openMailBtn.addEventListener('click', openDirectMail);
+      }
+      
+      // Calendar script
+      console.log('Starting calendar initialization');
+      
+      const calendarId = encodeURIComponent('greatnotchinn@gmail.com');
+      const apiKey = 'AIzaSyDXDA1_OaHw-OV3JQwdIT6RmV8yl3rNVvM';
+      const CACHE_KEY = 'gni_calendar_cache_v3';
+      const CACHE_TTL = 15 * 60 * 1000;
+
+      const now = new Date();
+      const todayStr = now.toDateString();
+
+      const futureBody = document.querySelector('#future tbody');
+      const pastBody   = document.querySelector('#past tbody');
+      const showMoreBtn = document.getElementById('showMoreBtn');
+      const togglePastBtn = document.getElementById('togglePastBtn');
+
+      let allFutureEvents = [];
+      let displayedCount = 0;
+      const INITIAL_EVENTS = 60;
+      const MORE_EVENTS = 30;
+
+      console.log('Elements found:', {
+        futureBody: !!futureBody,
+        pastBody: !!pastBody,
+        showMoreBtn: !!showMoreBtn,
+        togglePastBtn: !!togglePastBtn
+      });
+
+      function initCalendar() {
+        console.log('initCalendar called');
+        const cached = getCache();
+        if (cached) {
+          console.log('Using cached data');
+          renderEvents(cached);
+        } else {
+          console.log('Fetching fresh data');
+          fetchEvents();
+        }
+      }
+
+      function getCache() {
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (!raw) return null;
+        try {
+          const parsed = JSON.parse(raw);
+          if (Date.now() - parsed.timestamp > CACHE_TTL) {
+            localStorage.removeItem(CACHE_KEY);
+            return null;
+          }
+          return parsed.data;
+        } catch {
+          localStorage.removeItem(CACHE_KEY);
+          return null;
+        }
+      }
+
+      function setCache(data) {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data }));
+      }
+
+      function fetchEvents() {
+        const pastStart = new Date();
+        pastStart.setDate(pastStart.getDate() - 30);
+
+        const futureUrl =
+          `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events` +
+          `?key=${apiKey}&singleEvents=true&orderBy=startTime&timeMin=${now.toISOString()}&maxResults=250`;
+
+        const pastUrl =
+          `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events` +
+          `?key=${apiKey}&singleEvents=true&orderBy=startTime` +
+          `&timeMin=${pastStart.toISOString()}&timeMax=${now.toISOString()}&maxResults=250`;
+
+        console.log('Fetching from API...');
+
+        Promise.all([fetch(futureUrl), fetch(pastUrl)])
+          .then(responses => {
+            console.log('Responses received');
+            return Promise.all(responses.map(res => {
+              if (!res.ok) {
+                console.error('API error:', res.status, res.statusText);
+                throw new Error(`API error: ${res.status}`);
+              }
+              return res.json();
+            }));
+          })
+          .then(([future, past]) => {
+            console.log('API data:', {
+              futureTotal: future.items ? future.items.length : 0,
+              futureWithTime: (future.items || []).filter(e => e.start.dateTime).length,
+              pastTotal: past.items ? past.items.length : 0
+            });
+            
+            const payload = {
+              future: (future.items || []).filter(e => e.start.dateTime),
+              past:   (past.items   || []).filter(e => e.start.dateTime)
+            };
+            setCache(payload);
+            renderEvents(payload);
+          })
+          .catch(err => {
+            console.error('Fetch failed:', err);
+            if(futureBody) futureBody.innerHTML = '<tr><td colspan="3">Error loading events: ' + err.message + '</td></tr>';
+          });
+      }
+
+      function renderEvents({ future, past }) {
+        if(!futureBody || !pastBody) {
+          console.error('Table bodies not found!');
+          return;
+        }
+        
+        allFutureEvents = future;
+        displayedCount = 0;
+        
+        console.log('Rendering', allFutureEvents.length, 'future events');
+        
+        futureBody.innerHTML = '';
+        pastBody.innerHTML   = '';
+
+        if (!allFutureEvents.length) {
+          futureBody.innerHTML = '<tr><td colspan="3">No upcoming events.</td></tr>';
+          if (showMoreBtn) showMoreBtn.style.display = 'none';
+        } else {
+          loadMoreEvents();
+        }
+
+        const recentPast = past
+          .sort((a, b) => new Date(b.start.dateTime) - new Date(a.start.dateTime))
+          .slice(0, 14);
+
+        if (!recentPast.length) {
+          pastBody.innerHTML = '<tr><td colspan="3">No recent events.</td></tr>';
+        } else {
+          recentPast.forEach(e => renderRow(e, pastBody));
+        }
+      }
+
+      function loadMoreEvents() {
+        const eventsToLoad = displayedCount === 0 ? INITIAL_EVENTS : MORE_EVENTS;
+        const nextBatch = allFutureEvents.slice(displayedCount, displayedCount + eventsToLoad);
+        
+        console.log('Loading', eventsToLoad, 'events, got', nextBatch.length);
+        
+        nextBatch.forEach(e => renderRow(e, futureBody));
+        displayedCount += nextBatch.length;
+
+        if (showMoreBtn) {
+          if (displayedCount >= allFutureEvents.length) {
+            showMoreBtn.style.display = 'none';
+          } else {
+            showMoreBtn.style.display = 'block';
+          }
+        }
+      }
+
+      function renderRow(event, tbody) {
+        if (!event.start.dateTime) return;
+
+        const start = new Date(event.start.dateTime);
+        const date = start.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+        const time = start.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+
+        const tr = document.createElement('tr');
+
+        const eventHTML = start.toDateString() === todayStr
+          ? `${event.summary || ''} <span class="live-badge">LIVE TONIGHT</span>`
+          : `${event.summary || ''}`;
+
+        tr.innerHTML = `<td>${date}</td><td>${eventHTML}</td><td>${time}</td>`;
+
+        if (start.toDateString() === todayStr) tr.classList.add('today');
+
+        tr.onclick = (e) => {
+          e.preventDefault();
+          openEventModal(event);
+        };
+        tbody.appendChild(tr);
+      }
+
+      function togglePast() {
+        const p = document.getElementById('past-wrap');
+        const t = togglePastBtn;
+        const open = p.style.display === 'none';
+        p.style.display = open ? 'block' : 'none';
+        t.textContent = open ? 'Hide Past Events ▲' : 'Show Past Events ▼';
+      }
+
+      const eventModal = document.getElementById('eventModal');
+      
+      function openEventModal(event) {
+          const start = new Date(event.start.dateTime);
+          const end = event.end.dateTime ? new Date(event.end.dateTime) : null;
+          
+          const dateStr = start.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+          const timeStr = start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) + 
+                          (end ? ' - ' + end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '');
+
+          document.getElementById('modalTitle').textContent = event.summary || "No Title";
+          document.getElementById('modalTime').textContent = `${dateStr} • ${timeStr}`;
+          document.getElementById('modalDesc').textContent = event.description || "No description provided.";
+          document.getElementById('modalLocation').textContent = event.location ? `📍 ${event.location}` : "";
+          document.getElementById('modalLink').href = event.htmlLink;
+          
+          eventModal.classList.add('active');
+          eventModal.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeEventModal() {
+          eventModal.classList.remove('active');
+          eventModal.setAttribute('aria-hidden', 'true');
+      }
+
+      window.loadMoreEvents = loadMoreEvents;
+      window.togglePast = togglePast;
+      window.openEventModal = openEventModal;
+      window.closeEventModal = closeEventModal;
+
+      if (eventModal) {
+        eventModal.addEventListener('click', (e) => {
+            if (e.target === eventModal) closeEventModal();
+        });
+      }
+      
+      document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && eventModal && eventModal.classList.contains('active')) closeEventModal();
+      });
+
+      if (showMoreBtn) {
+        showMoreBtn.addEventListener('click', loadMoreEvents);
+      }
+
+      if (togglePastBtn) {
+        togglePastBtn.addEventListener('click', togglePast);
+      }
+
+      initCalendar();
+    });
+  </script>
+</body>
+</html>

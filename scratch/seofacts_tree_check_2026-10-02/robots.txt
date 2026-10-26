@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Canonical host (confirmed): https://thegreatnotchinn.com (no www)
+Sitemap: https://thegreatnotchinn.com/sitemap.xml

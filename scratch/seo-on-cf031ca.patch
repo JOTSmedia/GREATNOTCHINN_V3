@@ -1,0 +1,317 @@
+From 0828446d0f9581df8eb19510ff64d367845af13f Mon Sep 17 00:00:00 2001
+From: Great Notch Inn Web <grokbot@box.local>
+Date: Tue, 29 Sep 2026 03:21:19 -0400
+Subject: [PATCH] SEO + John-confirmed facts on top of cf031ca
+
+- Title/meta/OG/Twitter text from the SEO audit
+- JSON-LD = SEO schema-final.jsonld (BarOrPub+MusicVenue, hours Tu-Su 17:00-02:00,
+  geo, hasMap = John's Maps link, paymentAccepted cash only, Facebook sameAs)
+- Visible hours (Tue-Sun 5 PM-2 AM, closed Monday), live-music nights with a
+  pointer to the calendar, 'Cash only, ATM on site'
+- John's Maps link (maps.app.goo.gl/sAaQ2Q5kPtpLydYb6) for Directions/address;
+  keyless map embed
+- Copy: 'every night we're open (Tue-Sun)'; never claims Monday
+- Official Facebook URL with accessible labels
+- Press Archive: links to the 16 scanned PDFs already on the live server
+Open TODO-JOHN kept: canonical host, OG photo, food/age policy, holiday hours,
+band label, form service, old PDFs/pages, .htaccess www/old-URL redirects.
+---
+ css/style.css |  11 ++++
+ index.html    | 160 ++++++++++++++++++++++++++++++++++++++------------
+ 2 files changed, 135 insertions(+), 36 deletions(-)
+
+diff --git a/css/style.css b/css/style.css
+index eddf019..d79bb4b 100644
+--- a/css/style.css
++++ b/css/style.css
+@@ -1235,3 +1235,14 @@ button.toggle { display: block; margin: 10px auto 0; background: none; border: 0
+ /* Skip layout/paint work for sections until they come near the screen (faster first load on phones).
+    Turned off (html.cv-off) as soon as someone uses an in-page link, so jumps land in the right place. */
+ html:not(.cv-off) .parallax:not(#home), html:not(.cv-off) #contact { content-visibility: auto; contain-intrinsic-size: auto 1200px; }
++
++/* ==========================================================================
++   Confirmed hours lines and press PDF archive (seo-facts branch)
++   ========================================================================== */
++.hours-line { margin: 6px 0; line-height: 1.5; }
++.hours-line a { color: var(--accent-cyan); }
++.press-archive { margin-top: 28px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
++.press-archive h3 { font-size: 1.1rem; margin: 0 0 8px; }
++.press-pdf-list { margin: 10px 0 0; padding-left: 20px; line-height: 1.7; text-align: left; }
++.press-pdf-list a { color: var(--accent-cyan); }
++.pdf-note { color: #aaa; font-size: 0.85em; }
+diff --git a/index.html b/index.html
+index dbca7a5..dbf816e 100644
+--- a/index.html
++++ b/index.html
+@@ -3,8 +3,8 @@
+ <head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1" />
+-  <title>The Great Notch Inn | Live Rock &amp; Blues Roadhouse in Little Falls, NJ · Since 1939</title>
+-  <meta name="description" content="Live rock &amp; blues and never a cover charge. A family-owned roadhouse on Route 46 West in Little Falls, NJ since 1939. Full bar, porch &amp; package goods." />
++  <title>Great Notch Inn | Live Music Bar in Little Falls, NJ</title>
++  <meta name="description" content="Historic 1939 roadhouse on Route 46 in Little Falls, NJ. Live rock &amp; blues every night it's open, never a cover, full bar &amp; front porch. See the lineup." />
+   <meta name="theme-color" content="#000000" />
+   <link rel="icon" href="/favicon.ico" sizes="any" />
+ 
+@@ -15,27 +15,38 @@
+   <meta property="og:type" content="website" />
+   <meta property="og:site_name" content="The Great Notch Inn" />
+   <meta property="og:locale" content="en_US" />
+-  <meta property="og:title" content="The Great Notch Inn | Live Rock &amp; Blues Roadhouse Since 1939" />
+-  <meta property="og:description" content="Live rock &amp; blues and never a cover charge. A family-owned roadhouse on Route 46 West in Little Falls, NJ since 1939." />
++  <meta property="og:title" content="Great Notch Inn | Live Music Bar in Little Falls, NJ" />
++  <meta property="og:description" content="Family-owned roadhouse on Route 46 since 1939. Live rock &amp; blues, never a cover, full bar and front porch." />
+   <!-- TODO-JOHN: social preview photo. Choose the photo, then add og:image (1200x630, absolute URL), og:image:alt, and switch twitter:card to summary_large_image. -->
+   <meta name="twitter:card" content="summary" />
+   <meta name="twitter:site" content="@GreatNotchInn" />
+-  <meta name="twitter:title" content="The Great Notch Inn | Live Rock &amp; Blues Roadhouse Since 1939" />
++  <meta name="twitter:title" content="Great Notch Inn | Live Music Bar in Little Falls, NJ" />
+   <meta name="twitter:description" content="Live rock &amp; blues and never a cover charge on Route 46 West in Little Falls, NJ since 1939." />
+ 
+-  <!-- Structured data: only facts the live site already states.
+-       TODO-JOHN: add once confirmed. openingHoursSpecification (hours for each day), url + image (need the canonical host),
+-       geo + hasMap (need the real Google Maps/Business link), priceRange, servesCuisine (food), paymentAccepted, age policy.
+-       TODO-JOHN: addressLocality is "Little Falls" as on the live site. Confirm Little Falls vs Woodland Park. -->
++  <!-- Structured data: SEO final schema (2026-09-29). Hours, town, Maps link, cash-only and Facebook URL confirmed by John.
++       url/@id/image assume the no-www host (see the canonical TODO-JOHN above).
++       TODO-JOHN: add once confirmed. priceRange, servesCuisine (food), age policy. -->
+   <script type="application/ld+json">
+ {
+   "@context": "https://schema.org",
+-  "@type": "BarOrPub",
++  "@type": [
++    "BarOrPub",
++    "MusicVenue"
++  ],
++  "@id": "https://thegreatnotchinn.com/#business",
+   "name": "The Great Notch Inn",
+-  "description": "Family-owned roadhouse on Route 46 West since 1939, with live rock and blues and never a cover charge.",
+-  "foundingDate": "1939",
++  "alternateName": [
++    "Great Notch Inn",
++    "The Notch"
++  ],
++  "description": "Family-owned roadhouse on Route 46 in Little Falls, NJ, open since 1939. Live rock and blues every night we're open (Tuesday to Sunday), no cover charge, a full bar, package goods, and a front porch.",
++  "url": "https://thegreatnotchinn.com/",
++  "image": [
++    "https://thegreatnotchinn.com/images/IMG_0742.jpg"
++  ],
+   "telephone": "+1-973-256-7742",
+   "email": "greatnotchinn@gmail.com",
++  "foundingDate": "1939",
+   "address": {
+     "@type": "PostalAddress",
+     "streetAddress": "400 Route 46 West",
+@@ -44,11 +55,66 @@
+     "postalCode": "07424",
+     "addressCountry": "US"
+   },
++  "geo": {
++    "@type": "GeoCoordinates",
++    "latitude": 40.8744712,
++    "longitude": -74.1970892
++  },
++  "hasMap": "https://maps.app.goo.gl/sAaQ2Q5kPtpLydYb6",
++  "openingHoursSpecification": [
++    {
++      "@type": "OpeningHoursSpecification",
++      "dayOfWeek": [
++        "Tuesday",
++        "Wednesday",
++        "Thursday",
++        "Friday",
++        "Saturday",
++        "Sunday"
++      ],
++      "opens": "17:00",
++      "closes": "02:00"
++    }
++  ],
++  "currenciesAccepted": "USD",
++  "amenityFeature": [
++    {
++      "@type": "LocationFeatureSpecification",
++      "name": "Live music",
++      "value": true
++    },
++    {
++      "@type": "LocationFeatureSpecification",
++      "name": "No cover charge",
++      "value": true
++    },
++    {
++      "@type": "LocationFeatureSpecification",
++      "name": "Outdoor porch seating",
++      "value": true
++    },
++    {
++      "@type": "LocationFeatureSpecification",
++      "name": "ATM on site",
++      "value": true
++    },
++    {
++      "@type": "LocationFeatureSpecification",
++      "name": "Package goods (takeout beer and wine)",
++      "value": true
++    },
++    {
++      "@type": "LocationFeatureSpecification",
++      "name": "Private parties and events",
++      "value": true
++    }
++  ],
+   "sameAs": [
+-    "https://www.facebook.com/profile.php?id=100051551302390",
++    "https://www.facebook.com/100051551302390/",
+     "https://www.instagram.com/greatnotchinn/",
+     "https://x.com/GreatNotchInn/"
+-  ]
++  ],
++  "paymentAccepted": "Cash only (ATM on site)"
+ }
+   </script>
+ 
+@@ -129,8 +195,7 @@
+ 
+       <p style="margin-top:16px">
+         <strong style="color:var(--accent-lime)">ADDRESS:</strong>
+-        <!-- TODO-JOHN: Little Falls vs Woodland Park. The address is shown exactly as on the live site. -->
+-        <a href="https://www.google.com/maps/search/?api=1&amp;query=The+Great+Notch+Inn%2C+400+Route+46+West%2C+Little+Falls%2C+NJ+07424" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none">
++        <a href="https://maps.app.goo.gl/sAaQ2Q5kPtpLydYb6" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none">
+           400 Route 46 West, Little Falls, NJ 07424
+         </a>
+       </p>
+@@ -142,25 +207,24 @@
+ 
+       <div class="cta-row">
+         <a class="cta-btn cta-call" href="tel:+19732567742">Call (973) 256-7742</a>
+-        <!-- TODO-JOHN: real Google Maps / Business Profile link. This directions URL is built from the address until John sends the official link. -->
+-        <a class="cta-btn cta-directions" href="https://www.google.com/maps/dir/?api=1&amp;destination=The+Great+Notch+Inn%2C+400+Route+46+West%2C+Little+Falls%2C+NJ+07424" target="_blank" rel="noopener noreferrer" data-todo="maps-link">Get Directions</a>
++        <a class="cta-btn cta-directions" href="https://maps.app.goo.gl/sAaQ2Q5kPtpLydYb6" target="_blank" rel="noopener noreferrer">Get Directions</a>
+         <a class="cta-btn cta-events" href="#calendar">Tonight's Show &amp; Events</a>
+         <a class="cta-btn cta-book" href="mailto:greatnotchinn@gmail.com?subject=Private%20Booking%20Inquiry">Book a Private Party</a>
+       </div>
+ 
+       <div class="hours-block" id="hours">
+         <h2 class="hours-title">Hours &amp; Info</h2>
+-        <!-- TODO-JOHN: opening hours for each day of the week (plus holiday exceptions). Don't guess. -->
+-        <p class="todo-placeholder" data-todo="hours">[Hours coming soon]</p>
+-        <!-- TODO-JOHN: which night (if any) has no live music. The live site says both "every night" and "six nights a week". -->
+-        <p class="todo-placeholder" data-todo="music-nights">[Live music nights: details coming soon]</p>
+-        <!-- TODO-JOHN: price range, food served (and when), payment methods (cash/cards), and age policy (e.g. 21+). -->
+-        <p class="todo-placeholder" data-todo="policies">[Food, payment &amp; age policy details coming soon]</p>
+-        <p class="hours-note">Never a cover charge · Package goods · ATM on site</p>
++        <!-- Hours confirmed by John 2026-09-29. TODO-JOHN: holiday exceptions, if any. -->
++        <p class="hours-line"><strong>Open:</strong> Tuesday–Sunday, 5 PM – 2 AM · <strong>Closed Monday</strong></p>
++        <p class="hours-line"><strong>Live music every night we're open:</strong> Tue–Thu 8 PM – 12 AM · Fri–Sat 9 PM – 1 AM · Sunday usually from 8 PM. <a href="#calendar">See the calendar for exact times</a>.</p>
++        <p class="hours-line"><strong>Cash only, ATM on site.</strong></p>
++        <!-- TODO-JOHN: price range, food served (and when), and age policy (e.g. 21+). Payment confirmed: cash only, ATM on site. -->
++        <p class="todo-placeholder" data-todo="policies">[Food &amp; age policy details coming soon]</p>
++        <p class="hours-note">Never a cover charge · Package goods</p>
+       </div>
+ 
+       <div class="social-row" aria-label="Follow The Great Notch Inn">
+-        <a class="social-btn" href="https://www.facebook.com/profile.php?id=100051551302390" target="_blank" rel="noopener noreferrer">Facebook</a>
++        <a class="social-btn" href="https://www.facebook.com/100051551302390/" target="_blank" rel="noopener noreferrer" aria-label="The Great Notch Inn on Facebook (opens in a new tab)">Facebook</a>
+         <a class="social-btn" href="https://www.instagram.com/greatnotchinn/" target="_blank" rel="noopener noreferrer">Instagram</a>
+         <a class="social-btn" href="https://x.com/GreatNotchInn/" target="_blank" rel="noopener noreferrer">X</a>
+       </div>
+@@ -174,8 +238,7 @@
+     <div class="panel texture-paper">
+       <h2>ABOUT THE NOTCH</h2>
+       <div class="sub">A Little Falls roadhouse since 1939</div>
+-      <!-- TODO-JOHN: "live entertainment every night" below is live-site wording. Confirm the no-music night, if any. -->
+-      <p>The Great Notch Inn is a family-owned tavern that was opened by Gregory and Florence DiLeo in 1939. For many years the Notch served breakfast, lunch, and dinner along with a variety of beer and liquor. While everything around has changed, the Great Notch Inn has basically remained the same. Gregory DiLeo operated the bar until his passing in 1988, leaving the business to his daughter Florence and children Rich and Gail. Since 1988, the Great Notch Inn has found its niche as a live music venue, hosting many rock and blues bands from the tri-state area — featuring live entertainment every night. The Notch also offers limited food and takeout beer and wine from open till close. The beautiful front porch attracts bikers and locals who enjoy a cold beer and the old-time roadhouse feel.</p>
++      <p>The Great Notch Inn is a family-owned tavern that was opened by Gregory and Florence DiLeo in 1939. For many years the Notch served breakfast, lunch, and dinner along with a variety of beer and liquor. While everything around has changed, the Great Notch Inn has basically remained the same. Gregory DiLeo operated the bar until his passing in 1988, leaving the business to his daughter Florence and children Rich and Gail. Since 1988, the Great Notch Inn has found its niche as a live music venue, hosting many rock and blues bands from the tri-state area — featuring live entertainment every night we're open (Tuesday to Sunday). The Notch also offers limited food and takeout beer and wine from open till close. The beautiful front porch attracts bikers and locals who enjoy a cold beer and the old-time roadhouse feel.</p>
+       <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap;">
+         <a href="#articles" class="read-more">Read Articles & History</a>
+         <a href="#photos" class="read-more">See Photos</a>
+@@ -326,6 +389,30 @@
+           </div>
+         </div>
+       </div>
++      <div class="press-archive">
++        <!-- Scanned clippings already on the live server at /images/*.pdf (not in this repo). They must stay on the server.
++             TODO-JOHN: old PDFs/pages. Long-term keep/redirect/remove decision still open; if removed, delete this list. -->
++        <h3>Press Archive: Scanned Newspaper &amp; Magazine Clippings</h3>
++        <p>Original clippings about the Great Notch Inn and the DiLeo family, 1980–2010.</p>
++        <ul class="press-pdf-list">
++          <li><a href="/images/patnews.pdf" target="_blank" rel="noopener">Paterson Evening News, June 20, 1980: article about Greg DiLeo</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/hnewsold.pdf" target="_blank" rel="noopener">Herald News (NJ): article about Greg DiLeo</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/dileo.pdf" target="_blank" rel="noopener">Article about Greg DiLeo</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/waterbury.pdf" target="_blank" rel="noopener">Waterbury Republican-American: news article</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/heraldnews.pdf" target="_blank" rel="noopener">Herald News, May 23, 2003: “Best Porch for the Serious Harley Watcher” (part 1)</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/heraldnews2.pdf" target="_blank" rel="noopener">Herald News, May 23, 2003: “Best Porch for the Serious Harley Watcher” (part 2)</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/stledger.pdf" target="_blank" rel="noopener">The Star-Ledger, January 18, 2002</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/bluesrevue.pdf" target="_blank" rel="noopener">Blues Revue Magazine, January 2000 (part 1)</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/blues2.pdf" target="_blank" rel="noopener">Blues Revue Magazine, January 2000 (part 2)</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/hn4.pdf" target="_blank" rel="noopener">Herald News, October 21, 2005 (part 1)</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/hn4a.pdf" target="_blank" rel="noopener">Herald News, October 21, 2005 (part 2)</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/record.pdf" target="_blank" rel="noopener">The Bergen Record, January 24, 1997</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/gazette.pdf" target="_blank" rel="noopener">Little Falls Gazette, August 2000</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/betterout.pdf" target="_blank" rel="noopener">The Bergen Record, Better Living section, October 25, 2007 (part 1)</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/betterin.pdf" target="_blank" rel="noopener">The Bergen Record, Better Living section, October 25, 2007 (part 2)</a> <span class="pdf-note">(PDF scan)</span></li>
++          <li><a href="/images/njcom.pdf" target="_blank" rel="noopener">NJ.com, December 5, 2010: Toys for Tots</a> <span class="pdf-note">(PDF scan)</span></li>
++        </ul>
++      </div>
+     </div>
+   </section>
+ 
+@@ -572,7 +659,7 @@
+         </div>
+         <div class="tl-item">
+           <div class="tl-year">Today</div>
+-          <p>Live music, cold drinks, motorcycle haven — a true NJ survivor.</p><!-- TODO-JOHN: the live site says "six nights a week" here. Confirm the schedule. -->
++          <p>Live music every night we're open (Tue–Sun), cold drinks, motorcycle haven — a true NJ survivor.</p>
+         </div>
+       </div>
+     </div>
+@@ -617,9 +704,9 @@
+       </form>
+ 
+       <h3 class="map-title">Find Us</h3>
+-      <!-- TODO-JOHN: swap this address-search map for the embed code from the official Google Business Profile once John sends the real link. -->
++      <!-- Keyless Google Maps embed of the Great Notch Inn listing (no API key). -->
+       <div class="map-embed">
+-        <iframe src="https://www.google.com/maps?q=The+Great+Notch+Inn,+400+Route+46+West,+Little+Falls,+NJ+07424&amp;output=embed"
++        <iframe src="https://maps.google.com/maps?q=Great+Notch+Inn,+400+Route+46+West,+Little+Falls,+NJ+07424&amp;output=embed"
+                 title="Map: The Great Notch Inn, 400 Route 46 West, Little Falls, NJ 07424" loading="lazy"
+                 referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+       </div>
+@@ -630,7 +717,7 @@
+   <!-- Mobile quick actions (hidden on desktop) -->
+   <nav class="action-bar" aria-label="Quick actions">
+     <a href="tel:+19732567742">Call</a>
+-    <a href="https://www.google.com/maps/dir/?api=1&amp;destination=The+Great+Notch+Inn%2C+400+Route+46+West%2C+Little+Falls%2C+NJ+07424" target="_blank" rel="noopener noreferrer" data-todo="maps-link">Directions</a><!-- TODO-JOHN: swap for the real Google Maps / Business link -->
++    <a href="https://maps.app.goo.gl/sAaQ2Q5kPtpLydYb6" target="_blank" rel="noopener noreferrer">Directions</a>
+     <a href="#calendar" class="action-live">Live Tonight</a>
+   </nav>
+ 
+@@ -643,8 +730,8 @@
+         <h3 style="margin:0 0 8px 0; color: var(--molten-start);">The Great Notch Inn</h3>
+         <div style="color:#bbb; font-size: 0.95rem;">Family owned and operated since 1939 — A New Jersey landmark</div>
+         <div style="margin-top:10px;color:#ccc">
+-          <a href="https://www.google.com/maps/search/?api=1&amp;query=The+Great+Notch+Inn%2C+400+Route+46+West%2C+Little+Falls%2C+NJ+07424" target="_blank" rel="noopener noreferrer">400 Route 46 West, Little Falls, NJ 07424</a>
+-          · <a href="https://www.google.com/maps/dir/?api=1&amp;destination=The+Great+Notch+Inn%2C+400+Route+46+West%2C+Little+Falls%2C+NJ+07424" target="_blank" rel="noopener noreferrer" data-todo="maps-link">Directions</a><!-- TODO-JOHN: swap for the real Google Maps / Business link -->
++          <a href="https://maps.app.goo.gl/sAaQ2Q5kPtpLydYb6" target="_blank" rel="noopener noreferrer">400 Route 46 West, Little Falls, NJ 07424</a>
++          · <a href="https://maps.app.goo.gl/sAaQ2Q5kPtpLydYb6" target="_blank" rel="noopener noreferrer">Directions</a>
+         </div>
+         <div style="margin-top:6px">
+           <a href="tel:+19732567742" style="font-weight: bold; color: var(--accent-yellow);">Call (973) 256-7742</a>
+@@ -664,9 +751,10 @@
+ 
+       <div style="flex:1 1 300px;">
+         <strong style="color:var(--accent-lime); font-size: 1.05rem;">Experience</strong>
+-        <div style="color:#ccc;margin-top:8px;line-height:1.5">Live Rock &amp; Blues · No Cover Charge · Full Bar &amp; Package Goods</div><!-- TODO-JOHN: restore "every night" only once the music schedule is confirmed -->
++        <div style="color:#ccc;margin-top:8px;line-height:1.5">Live Rock &amp; Blues Every Night We're Open · No Cover Charge · Full Bar &amp; Package Goods</div>
++        <div style="color:#ccc;margin-top:6px;line-height:1.5">Tue–Sun 5 PM – 2 AM · Closed Monday · Cash only, ATM on site</div>
+         <div class="social-row" style="justify-content:flex-start; margin-top: 12px;">
+-          <a class="social-btn" href="https://www.facebook.com/profile.php?id=100051551302390" target="_blank" rel="noopener noreferrer">Facebook</a>
++          <a class="social-btn" href="https://www.facebook.com/100051551302390/" target="_blank" rel="noopener noreferrer" aria-label="The Great Notch Inn on Facebook (opens in a new tab)">Facebook</a>
+           <a class="social-btn" href="https://www.instagram.com/greatnotchinn/" target="_blank" rel="noopener noreferrer">Instagram</a>
+           <a class="social-btn" href="https://x.com/GreatNotchInn/" target="_blank" rel="noopener noreferrer">X</a>
+         </div>
+-- 
+2.47.3
+

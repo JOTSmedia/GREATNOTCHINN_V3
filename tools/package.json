@@ -1,0 +1,7 @@
+{
+  "name": "greatnotch-image-tools",
+  "private": true,
+  "description": "Generates responsive WebP/AVIF variants from the master JPEGs in ../images",
+  "scripts": { "images": "node build-images.js" },
+  "dependencies": { "sharp": "^0.34.0" }
+}

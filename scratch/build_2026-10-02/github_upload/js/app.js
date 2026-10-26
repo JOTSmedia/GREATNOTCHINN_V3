@@ -1,0 +1,548 @@
+/**
+ * THE GREAT NOTCH INN — Main Interactive Engine
+ * Est. 1939 • Little Falls, NJ
+ * Google Calendar integration, lightbox gallery, image error handling & event modal
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+  // 1. Live Tonight Jump Button
+  const liveTonightBtn = document.getElementById('liveTonightBtn');
+  if (liveTonightBtn) {
+    liveTonightBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const cal = document.querySelector('#calendar');
+      if (cal) cal.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  // 2. Lazy section backgrounds + calendar embed, mobile nav, lightbox
+  setupLazyLoading();
+  setupNav();
+  setupLightbox();
+
+  // 3. Setup Contact Form
+  setupContactForm();
+
+  // 4. Initialize Google Calendar API & Table
+  initGoogleCalendar();
+
+  // 5. YouTube click-to-play (loads the player only when asked)
+  setupVideoFacades();
+});
+
+function setupVideoFacades() {
+  document.querySelectorAll('.yt-facade').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const id = btn.getAttribute('data-yt');
+      const iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1';
+      iframe.title = btn.querySelector('.yt-title') ? btn.querySelector('.yt-title').textContent : 'YouTube video';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allowFullscreen = true;
+      btn.replaceWith(iframe);
+      iframe.focus();
+    });
+  });
+}
+
+/* --------------------------------------------------------------------------
+   Dialog helpers: focus goes into the dialog, Tab stays inside, focus returns on close
+   -------------------------------------------------------------------------- */
+function trapFocus(container, e) {
+  if (e.key !== 'Tab') return;
+  const f = Array.from(container.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])'))
+    .filter(el => !el.disabled && el.offsetParent !== null);
+  if (!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+}
+
+/* --------------------------------------------------------------------------
+   Lazy loading: section background photos and the Google Calendar embed
+   -------------------------------------------------------------------------- */
+function setupLazyLoading() {
+  const sections = document.querySelectorAll('.parallax:not(#home)');
+  const cal = document.querySelector('.calendar-embed iframe[data-src]');
+  const loadCal = () => { if (cal && !cal.src) cal.src = cal.dataset.src; };
+  if (!('IntersectionObserver' in window)) {
+    sections.forEach(s => s.classList.add('bg-in'));
+    loadCal();
+    return;
+  }
+  const bgObs = new IntersectionObserver((entries, obs) => {
+    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('bg-in'); obs.unobserve(en.target); } });
+  }, { rootMargin: '600px 0px' });
+  sections.forEach(s => bgObs.observe(s));
+  if (cal) {
+    const calObs = new IntersectionObserver((entries, obs) => {
+      if (entries.some(en => en.isIntersecting)) { loadCal(); obs.disconnect(); }
+    }, { rootMargin: '300px 0px' });
+    calObs.observe(cal);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Mobile navigation (hamburger)
+   -------------------------------------------------------------------------- */
+function setupNav() {
+  const nav = document.getElementById('site-nav');
+  const toggle = nav ? nav.querySelector('.nav-toggle') : null;
+  if (!nav || !toggle) return;
+  function setOpen(open) {
+    nav.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('open')));
+  nav.querySelectorAll('.nav-inner a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && nav.classList.contains('open')) { setOpen(false); toggle.focus(); } });
+}
+
+/* --------------------------------------------------------------------------
+   Lightbox Gallery for Photos & Merch
+   -------------------------------------------------------------------------- */
+function setupLightbox() {
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  if (!lb || !lbImg) return;
+
+  const allImages = Array.from(document.querySelectorAll('#photos .gallery img, #merchandise figure img'));
+  let currentIndex = 0;
+  let lastFocus = null;
+
+  function show(i) {
+    currentIndex = (i + allImages.length) % allImages.length;
+    const img = allImages[currentIndex];
+    lbImg.src = img.dataset.full || img.currentSrc || img.src;
+    lbImg.alt = img.alt || '';
+  }
+  function openLightbox(i) {
+    lastFocus = document.activeElement;
+    show(i);
+    lb.hidden = false;
+    lb.classList.add('open');
+    document.getElementById('lbClose').focus();
+  }
+  function closeLightbox() {
+    lb.classList.remove('open');
+    lb.hidden = true;
+    lbImg.removeAttribute('src');
+    if (lastFocus) lastFocus.focus();
+  }
+  function navLightbox(dir) { if (allImages.length) show(currentIndex + dir); }
+
+  window.closeLightbox = closeLightbox;
+  window.navLightbox = navLightbox;
+
+  document.getElementById('lbClose').addEventListener('click', closeLightbox);
+  document.getElementById('lbPrev').addEventListener('click', () => navLightbox(-1));
+  document.getElementById('lbNext').addEventListener('click', () => navLightbox(1));
+  lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+
+  document.addEventListener('keydown', e => {
+    if (lb.hidden) return;
+    if (e.key === 'Escape') closeLightbox();
+    else if (e.key === 'ArrowRight') navLightbox(1);
+    else if (e.key === 'ArrowLeft') navLightbox(-1);
+    else trapFocus(lb, e);
+  });
+
+  // Swipe left/right on touch screens
+  let startX = null;
+  lb.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend', e => {
+    if (startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 50) navLightbox(dx < 0 ? 1 : -1);
+    startX = null;
+  });
+
+  // Every photo/merch image opens the viewer; make them keyboard-reachable too
+  allImages.forEach((img, i) => {
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    img.setAttribute('aria-label', 'View larger: ' + (img.alt || 'photo'));
+    img.addEventListener('click', () => openLightbox(i));
+    img.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(i); } });
+  });
+}
+
+/* --------------------------------------------------------------------------
+   Contact Form Handler (Mailto & Direct Client)
+   -------------------------------------------------------------------------- */
+function setupContactForm() {
+  const contactForm = document.getElementById('contactForm');
+  const openMailBtn = document.getElementById('openMailBtn');
+
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = contactForm.name ? contactForm.name.value.trim() : '';
+      const email = contactForm.email ? contactForm.email.value.trim() : '';
+      const phone = contactForm.phone ? contactForm.phone.value.trim() : '';
+      const message = contactForm.message ? contactForm.message.value.trim() : '';
+
+      if (!name || !message) {
+        alert('Please provide your name and message.');
+        return;
+      }
+
+      const subject = encodeURIComponent('Inquiry from ' + name + ' — The Great Notch Inn');
+      const body = encodeURIComponent(
+        'Name: ' + name + '\n' +
+        'Email: ' + email + '\n' +
+        'Phone: ' + phone + '\n\n' +
+        'Message:\n' + message
+      );
+
+      window.location.href = 'mailto:greatnotchinn@gmail.com?subject=' + subject + '&body=' + body;
+    });
+  }
+
+  if (openMailBtn) {
+    openMailBtn.addEventListener('click', function() {
+      window.location.href = 'mailto:greatnotchinn@gmail.com';
+    });
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Google Calendar API Fetcher & Table Generator
+   -------------------------------------------------------------------------- */
+// ---------------------------------------------------------------------------
+// "Business night" in America/New_York, never the visitor's time zone.
+// 00:00-01:59 NY time still belongs to the previous night (the bar closes at 2 AM),
+// so at 1 AM Monday it is still Sunday night; the Monday rule starts at 2 AM Monday.
+// ---------------------------------------------------------------------------
+const NY_TZ = 'America/New_York';
+const NY_FMT = new Intl.DateTimeFormat('en-US', {
+  timeZone: NY_TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23'
+});
+function nyParts(date) {
+  const p = {};
+  NY_FMT.formatToParts(date).forEach(x => { p[x.type] = x.value; });
+  return { y: +p.year, m: +p.month, d: +p.day, h: +p.hour % 24 };
+}
+// Returns the business night as 'YYYY-MM-DD'
+function businessNightKey(date) {
+  const p = nyParts(date);
+  const shift = p.h < 2 ? 1 : 0; // before 2 AM NY: still the previous night
+  const u = new Date(Date.UTC(p.y, p.m - 1, p.d - shift));
+  return u.toISOString().slice(0, 10);
+}
+// 0 = Sunday ... 1 = Monday ... 6 = Saturday, for a 'YYYY-MM-DD' key
+function weekdayOfKey(key) {
+  const [y, m, d] = key.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
+// Business night an event belongs to (all-day events: their calendar date)
+function eventNightKey(event) {
+  if (!event || !event.start) return null;
+  if (event.start.date && !event.start.dateTime) return event.start.date;
+  return businessNightKey(new Date(event.start.dateTime));
+}
+// UTC instant of 02:00 NY time on a 'YYYY-MM-DD' key = start of that business night
+function businessNightStart(key) {
+  const [y, m, d] = key.split('-').map(Number);
+  const guess = Date.UTC(y, m - 1, d, 2);
+  const p = nyParts(new Date(guess)); // what NY wall clock reads at that UTC instant
+  const offset = Date.UTC(p.y, p.m - 1, p.d, p.h) - guess; // NY offset from UTC (-4h EDT / -5h EST)
+  return new Date(guess - offset);
+}
+// Band events only. Same rule as the live site (thegreatnotchinn.com: `.filter(e => e.start.dateTime)`):
+// all-day entries (start.date, no start.dateTime) are the opening-hours / notes entries, so they are
+// skipped everywhere: upcoming list, past list and the tonight card.
+function isBandEvent(e) { return !!(e && e.start && e.start.dateTime); }
+window.GNI_night = { businessNightKey, businessNightStart, weekdayOfKey, eventNightKey, isBandEvent }; // exposed for tests
+
+function initGoogleCalendar() {
+  const calendarId = encodeURIComponent('greatnotchinn@gmail.com');
+  const apiKey = 'AIzaSyDXDA1_OaHw-OV3JQwdIT6RmV8yl3rNVvM';
+  const CACHE_KEY = 'gni_calendar_cache_v3';
+  const CACHE_TTL = 15 * 60 * 1000; // 15 mins
+
+  const now = new Date();
+  const tonightKey = businessNightKey(now); // business night in NY time
+  // Lookup window follows the same rule: "upcoming" starts at 2 AM NY of tonight's
+  // business date, so at 1 AM Monday Sunday's show is still listed (and badged) as tonight.
+  const nightStart = businessNightStart(tonightKey);
+
+  const futureBody = document.querySelector('#future tbody');
+  const pastBody = document.querySelector('#past tbody');
+  const showMoreBtn = document.getElementById('showMoreBtn');
+  const togglePastBtn = document.getElementById('togglePastBtn');
+  const eventModal = document.getElementById('eventModal');
+
+
+  // Tonight's act card (band links section). Text only, via textContent (never innerHTML).
+  const tonightAct = document.getElementById('tonightAct');
+  const tonightCard = document.getElementById('tonightCard');
+  function setTonight(text, state) {
+    if (!tonightAct) return;
+    tonightAct.textContent = text;
+    if (tonightCard) {
+      tonightCard.dataset.state = state;
+      tonightCard.title = 'Tonight: ' + text;
+    }
+  }
+  function renderTonight(payload) {
+    if (!tonightAct) return;
+    if (weekdayOfKey(tonightKey) === 1) { // Monday business night: closed, never implies music
+      setTonight('Closed Mondays · Open Tue–Sun from 5 PM', 'closed');
+      return;
+    }
+    if (!payload) { setTonight('Live music tonight', 'fallback'); return; }
+    const seen = new Set();
+    const events = [].concat(payload.future || [], payload.past || [])
+      .filter(isBandEvent)
+      .filter(e => { const k = e.id || JSON.stringify(e.start) + e.summary; if (seen.has(k)) return false; seen.add(k); return true; })
+      .filter(e => eventNightKey(e) === tonightKey);
+    const acts = events
+      .filter(e => e.summary && e.summary.trim())
+      .sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime));
+    if (acts.length) { setTonight(acts[0].summary.replace(/\s+/g, ' ').trim(), 'event'); return; }
+    setTonight('Live music tonight', 'fallback');
+  }
+  renderTonight(null); // first paint: Monday rule or the generic fallback, before any fetch
+
+  let allFutureEvents = [];
+  let displayedCount = 0;
+  const INITIAL_EVENTS = 10;
+  const MORE_EVENTS = 10;
+
+  function getCache() {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw);
+      if (Date.now() - parsed.timestamp > CACHE_TTL) {
+        localStorage.removeItem(CACHE_KEY);
+        return null;
+      }
+      return parsed.data;
+    } catch {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+  }
+
+  function setCache(data) {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data }));
+    } catch(e) {}
+  }
+
+  function fetchEvents() {
+    const pastStart = new Date(nightStart.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const futureUrl =
+      `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events` +
+      `?key=${apiKey}&singleEvents=true&orderBy=startTime&timeMin=${nightStart.toISOString()}&maxResults=250`;
+
+    const pastUrl =
+      `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events` +
+      `?key=${apiKey}&singleEvents=true&orderBy=startTime` +
+      `&timeMin=${pastStart.toISOString()}&timeMax=${nightStart.toISOString()}&maxResults=250`;
+
+    Promise.all([fetch(futureUrl), fetch(pastUrl)])
+      .then(responses => Promise.all(responses.map(res => {
+        if (!res.ok) throw new Error(`API status ${res.status}`);
+        return res.json();
+      })))
+      .then(([future, past]) => {
+        const payload = {
+          future: (future.items || []).filter(isBandEvent),
+          past: (past.items || []).filter(isBandEvent)
+        };
+        setCache(payload);
+        renderEvents(payload);
+        renderTonight(payload);
+      })
+      .catch(err => {
+        console.warn('Google Calendar API fetch error, using local fallback:', err);
+        renderFallbackEvents();
+        renderTonight(null);
+      });
+  }
+
+  function renderFallbackEvents() {
+    // No invented events: if the calendar can't be reached, point people to the real Google Calendar.
+    if (!futureBody) return;
+    futureBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px;">Couldn\'t load the schedule right now. ' +
+      '<a href="https://calendar.google.com/calendar/u/0/embed?src=greatnotchinn@gmail.com" target="_blank" rel="noopener noreferrer">Open the Google Calendar</a>.</td></tr>';
+    if (showMoreBtn) showMoreBtn.style.display = 'none';
+  }
+
+  function renderEvents({ future, past }) {
+    if (!futureBody) return;
+    future = (future || []).filter(isBandEvent); // also covers older cached payloads
+    past = (past || []).filter(isBandEvent);
+    allFutureEvents = future;
+    displayedCount = 0;
+    futureBody.innerHTML = '';
+    if (pastBody) pastBody.innerHTML = '';
+
+    if (!allFutureEvents.length) {
+      futureBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px;">No upcoming events currently scheduled. Check the Google Calendar below!</td></tr>';
+      if (showMoreBtn) showMoreBtn.style.display = 'none';
+    } else {
+      loadMoreEvents();
+    }
+
+    if (pastBody && past.length) {
+      const recentPast = past
+        .sort((a, b) => new Date(b.start.dateTime || b.start.date) - new Date(a.start.dateTime || a.start.date))
+        .slice(0, 14);
+      recentPast.forEach(e => renderRow(e, pastBody));
+    }
+  }
+
+  function loadMoreEvents() {
+    const eventsToLoad = displayedCount === 0 ? INITIAL_EVENTS : MORE_EVENTS;
+    const nextBatch = allFutureEvents.slice(displayedCount, displayedCount + eventsToLoad);
+    nextBatch.forEach(e => renderRow(e, futureBody));
+    displayedCount += nextBatch.length;
+
+    if (showMoreBtn) {
+      showMoreBtn.style.display = displayedCount >= allFutureEvents.length ? 'none' : 'block';
+    }
+  }
+
+  function renderRow(event, tbody) {
+    if (!isBandEvent(event)) return; // same as live: never list all-day hours entries
+    const startTimeStr = event.start.dateTime || event.start.date;
+    if (!startTimeStr) return;
+
+    const start = new Date(startTimeStr);
+    // Show the bar's own time (NY) to every visitor; all-day dates are plain dates (UTC, no shift)
+    const dz = event.start.dateTime ? NY_TZ : 'UTC';
+    const date = start.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: dz });
+    const time = event.start.dateTime
+      ? start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: NY_TZ })
+      : 'All Day';
+    // "LIVE TONIGHT" only for acts, not for "Open 5pm to 2am"-style hours entries
+    const isToday = eventNightKey(event) === tonightKey;
+
+    const tr = document.createElement('tr');
+    const tdDate = document.createElement('td');
+    const strong = document.createElement('strong');
+    strong.textContent = date;
+    tdDate.appendChild(strong);
+
+    const tdTitle = document.createElement('td');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'event-link';
+    btn.textContent = event.summary || 'Live Music';
+    btn.setAttribute('aria-label', (event.summary || 'Live Music') + ', ' + date + ' ' + time + ': show details');
+    tdTitle.appendChild(btn);
+    if (isToday) {
+      const badge = document.createElement('span');
+      badge.className = 'live-badge';
+      badge.textContent = 'LIVE TONIGHT';
+      tdTitle.appendChild(badge);
+    }
+
+    const tdTime = document.createElement('td');
+    const t = document.createElement('span');
+    t.className = 'event-time';
+    t.textContent = time;
+    tdTime.appendChild(t);
+
+    tr.append(tdDate, tdTitle, tdTime);
+    if (isToday) tr.classList.add('today');
+    tr.addEventListener('click', e => { if (e.target !== btn) openEventModal(event); });
+    btn.addEventListener('click', () => openEventModal(event));
+    tbody.appendChild(tr);
+  }
+
+  let modalLastFocus = null;
+  function openEventModal(event) {
+    if (!eventModal) return;
+    const startTimeStr = event.start.dateTime || event.start.date;
+    const start = new Date(startTimeStr);
+    const end = event.end && (event.end.dateTime || event.end.date) ? new Date(event.end.dateTime || event.end.date) : null;
+
+    const dz = event.start.dateTime ? NY_TZ : 'UTC';
+    const dateStr = start.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: dz });
+    const tf = { hour: 'numeric', minute: '2-digit', timeZone: NY_TZ };
+    const timeStr = event.start.dateTime
+      ? start.toLocaleTimeString('en-US', tf) + (end ? ' – ' + end.toLocaleTimeString('en-US', tf) : '')
+      : 'All Day';
+
+    const titleEl = document.getElementById('modalTitle');
+    const timeEl = document.getElementById('modalTime');
+    const descEl = document.getElementById('modalDesc');
+    const locEl = document.getElementById('modalLocation');
+    const linkEl = document.getElementById('modalLink');
+
+    if (titleEl) titleEl.textContent = event.summary || 'Live Music Performance';
+    if (timeEl) timeEl.textContent = `${dateStr} • ${timeStr}`;
+    if (descEl) descEl.textContent = event.description || 'Live rock & blues at The Great Notch Inn. No cover charge.';
+    if (locEl) locEl.textContent = event.location ? `📍 ${event.location}` : '📍 The Great Notch Inn, 400 Route 46 West, Little Falls, NJ';
+    if (linkEl) {
+      linkEl.href = event.htmlLink || 'https://calendar.google.com/calendar/u/0/embed?src=greatnotchinn@gmail.com';
+    }
+
+    modalLastFocus = document.activeElement;
+    eventModal.hidden = false;
+    eventModal.classList.add('active');
+    const closeBtn = document.getElementById('modalClose');
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeEventModal() {
+    if (eventModal) {
+      eventModal.classList.remove('active');
+      eventModal.hidden = true;
+      if (modalLastFocus) modalLastFocus.focus();
+    }
+  }
+
+  function togglePast() {
+    const p = document.getElementById('past-wrap');
+    if (!p || !togglePastBtn) return;
+    const open = p.style.display === 'none';
+    p.style.display = open ? 'block' : 'none';
+    togglePastBtn.textContent = open ? 'Hide Past Events ▲' : 'Show Past Events ▼';
+    togglePastBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  window.openEventModal = openEventModal;
+  window.closeEventModal = closeEventModal;
+  window.togglePast = togglePast;
+
+  if (eventModal) {
+    eventModal.addEventListener('click', function(e) {
+      if (e.target === eventModal) closeEventModal();
+    });
+  }
+
+  const modalCloseBtn = document.getElementById('modalClose');
+  if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeEventModal);
+
+  document.addEventListener('keydown', function(e) {
+    if (!eventModal || eventModal.hidden) return;
+    if (e.key === 'Escape') closeEventModal();
+    else trapFocus(eventModal, e);
+  });
+
+  if (showMoreBtn) showMoreBtn.addEventListener('click', loadMoreEvents);
+  if (togglePastBtn) togglePastBtn.addEventListener('click', togglePast);
+
+  // Initialize
+  const cached = getCache();
+  if (cached) {
+    renderEvents(cached);
+    renderTonight(cached);
+  } else {
+    fetchEvents();
+  }
+}
